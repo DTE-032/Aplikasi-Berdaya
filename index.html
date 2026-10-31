@@ -158,7 +158,7 @@ header {
     height: 44px;
     border-radius: 12px;
     object-fit: cover;
-    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .logo-text strong {
@@ -259,7 +259,7 @@ header {
     width: 280px;
     height: 100vh;
     background: var(--card);
-    z-index: 2050;
+    z-index: 2000;
     box-shadow: -10px 0 30px rgba(0,0,0,0.15);
     padding: 30px 20px;
     transition: right .3s ease-in-out;
@@ -304,7 +304,7 @@ header {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.5);
-    z-index: 2040;
+    z-index: 1999;
     opacity: 0;
     pointer-events: none;
     transition: opacity .3s;
@@ -962,11 +962,10 @@ footer {
         background: rgba(255, 255, 255, 0.96);
         backdrop-filter: blur(15px);
         border-top: 1px solid var(--border);
-        z-index: 2001; /* Ditingkatkan agar selalu dapat diklik */
+        z-index: 1000;
         justify-content: space-around;
         align-items: center;
         box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-        pointer-events: auto;
     }
 
     .dark .mobile-bottom-nav {
@@ -982,8 +981,9 @@ footer {
         align-items: center;
         gap: 3px;
         font-weight: 500;
-        cursor: pointer;
-        user-select: none;
+        text-decoration: none;
+        flex: 1;
+        padding: 8px 0;
     }
 
     .mobile-bottom-nav i {
@@ -1010,8 +1010,8 @@ footer {
 <!-- HEADER / NAVBAR -->
 <header>
     <div class="container navbar">
-        <a href="#beranda" class="logo">
-            <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN" class="logo-img">
+        <a href="#" class="logo">
+            <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN Berdaya" class="logo-img">
             <div class="logo-text">
                 <strong>YSKN Berdaya</strong>
                 <small>Sahabat Kemanusiaan Nusantara</small>
@@ -1045,7 +1045,7 @@ footer {
 <div class="mobile-drawer" id="mobileDrawer">
     <div class="mobile-drawer-header">
         <div class="logo">
-            <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN" class="logo-img">
+            <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN Berdaya" class="logo-img">
             <div class="logo-text">
                 <strong>YSKN App</strong>
             </div>
@@ -1350,10 +1350,10 @@ footer {
                 Bergabunglah sebagai Mitra Utama (CSR/Corporate), Mitra Program, atau Mitra Pendukung untuk membangun Nusantara yang mandiri.
             </p>
             <div class="hero-buttons" style="justify-content:center">
-                <a href="https://wa.me/628132220572" class="btn-outline">
+                <a href="https://wa.me/628132220572" class="btn-outline" target="_blank">
                     <i class="bi bi-envelope"></i> Ajukan Kemitraan
                 </a>
-                <a href="https://wa.me/6285779195107" class="btn-outline">
+                <a href="https://wa.me/6285779195107" class="btn-outline" target="_blank">
                     <i class="bi bi-envelope"></i> Hubungi Pengurus
                 </a>
             </div>
@@ -1369,7 +1369,7 @@ footer {
         <div class="footer-grid">
             <div class="footer-about">
                 <div class="logo">
-                    <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN" class="logo-img">
+                    <img src="https://i.pinimg.com/736x/62/a0/b7/62a0b71fb690efc8fb3d6590f179163c.jpg" alt="Logo YSKN Berdaya" class="logo-img">
                     <div class="logo-text">
                         <strong style="color:white;">YSKN App</strong>
                         <small style="color:rgba(255,255,255,.6)">Yayasan Sahabat Kemanusiaan Nusantara</small>
@@ -1532,36 +1532,37 @@ function showToast(msg) {
     }, 3500);
 }
 
-/* SMOOTH SCROLL FOR ALL LINKS INCLUDING BOTTOM NAV */
+/* SMOOTH SCROLL & NAVIGATION FUNCTIONALITY */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener("click", function(e) {
         const href = this.getAttribute("href");
-        if (href && href !== "#") {
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                target.scrollIntoView({ behavior: "smooth" });
-            }
+        if (!href || href === "#") return;
+        
+        const target = document.querySelector(href);
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth" });
         }
     });
 });
 
 /* ACTIVE BOTTOM NAV HIGHLIGHT ON SCROLL */
 const sections = document.querySelectorAll("section[id]");
-const bottomNavItems = document.querySelectorAll(".mobile-bottom-nav .nav-item");
+const navItems = document.querySelectorAll(".mobile-bottom-nav a.nav-item");
 
 window.addEventListener("scroll", () => {
     let current = "";
     sections.forEach(section => {
         const sectionTop = section.offsetTop - 100;
-        if (window.scrollY >= sectionTop) {
+        const sectionHeight = section.offsetHeight;
+        if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
             current = section.getAttribute("id");
         }
     });
 
-    bottomNavItems.forEach(item => {
+    navItems.forEach(item => {
         item.classList.remove("active");
-        if (item.getAttribute("href") === "#" + current) {
+        if (item.getAttribute("href") === `#${current}`) {
             item.classList.add("active");
         }
     });
